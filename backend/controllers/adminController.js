@@ -3,6 +3,7 @@ import doctorModel from "../models/doctorModel.js";
 import bcrypt from "bcrypt";
 import validator from "validator";
 import { v2 as cloudinary } from "cloudinary";
+import appointmentModel from "../models/appointmentModel.js"
 
 // API for admin login
 const loginAdmin = async (req, res) => {
@@ -107,10 +108,40 @@ const changeAvailablity = async (req, res) => {
     }
 }
 
+const appointmentsAdmin = async (req, res) => {
+    try {
+
+        const appointments = await appointmentModel.find({})
+        res.json({ success: true, appointments })
+
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+
+}
+
+const appointmentCancel = async (req, res) => {
+    try {
+
+        const { appointmentId } = req.body
+        await appointmentModel.findByIdAndUpdate(appointmentId, { cancelled: true })
+
+        res.json({ success: true, message: 'Appointment Cancelled' })
+
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+
+}
+
 
 export {
     loginAdmin,
     addDoctor,
     allDoctors,
-    changeAvailablity
+    changeAvailablity,
+    appointmentsAdmin,
+    appointmentCancel
 }
