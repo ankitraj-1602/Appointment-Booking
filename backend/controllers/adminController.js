@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import validator from "validator";
 import { v2 as cloudinary } from "cloudinary";
 import appointmentModel from "../models/appointmentModel.js"
+import userModel from "../models/userModel.js"
 
 // API for admin login
 const loginAdmin = async (req, res) => {
@@ -136,6 +137,28 @@ const appointmentCancel = async (req, res) => {
 
 }
 
+const adminDashboard = async (req, res) => {
+    try {
+
+        const doctors = await doctorModel.find({})
+        const users = await userModel.find({})
+        const appointments = await appointmentModel.find({})
+
+        const dashData = {
+            doctors: doctors.length,
+            appointments: appointments.length,
+            patients: users.length,
+            latestAppointments: appointments.reverse()
+        }
+
+        res.json({ success: true, dashData })
+
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
 
 export {
     loginAdmin,
@@ -143,5 +166,6 @@ export {
     allDoctors,
     changeAvailablity,
     appointmentsAdmin,
-    appointmentCancel
+    appointmentCancel,
+    adminDashboard
 }
